@@ -152,13 +152,14 @@
   }
   .dot {
     position: absolute; border-radius: 50%; opacity: .82;
-    width: 22px; height: 22px; margin: -11px 0 0 -11px;
+    width: 15px; height: 15px; margin: -7.5px 0 0 -7.5px;
     cursor: pointer;
     background-size: cover; background-position: center;
     transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
                 opacity .35s ease, transform .15s ease;
   }
   .dot:hover { transform: scale(2.2); z-index: 50; opacity: 1; }
+  .dot.face { width: 28px; height: 28px; margin: -14px 0 0 -14px; opacity: .92; }
   .dot.dim { opacity: .06; pointer-events: none; }
   .dot-label {
     position: absolute; font-size: 11px; color: #cdc3e6; white-space: nowrap;
@@ -346,13 +347,22 @@
   .cat-song.maxed { opacity: .35; pointer-events: none; }
 
   .home-btn {
-    position: fixed; top: 14px; left: 14px; z-index: 60;
-    width: 40px; height: 40px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: #1b1727ee; border: 1px solid #3a3450; color: #cfc6e4;
-    font-size: 18px; text-decoration: none; transition: all .2s;
+    position: fixed; top: 16px; left: 16px; z-index: 60;
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 18px; border-radius: 999px;
+    background: linear-gradient(90deg, #6d4fc2, #a64fc2);
+    border: 1px solid #b08aff; color: #fff;
+    font-size: 14px; font-weight: 800; text-decoration: none;
+    box-shadow: 0 0 18px rgba(150, 100, 255, .5), 0 6px 20px rgba(0, 0, 0, .4);
+    transition: all .2s;
   }
-  .home-btn:hover { border-color: #b08aff; transform: scale(1.12); color: #fff; }
+  .home-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 0 28px rgba(150, 100, 255, .75), 0 8px 24px rgba(0, 0, 0, .4);
+  }
+  @media (max-width: 700px) {
+    .home-btn { top: 10px; left: 10px; padding: 8px 13px; font-size: 13px; }
+  }
 
   footer { text-align: center; color: #564e6e; font-size: 12px; margin-top: 34px; line-height: 1.6; }
 
@@ -383,7 +393,7 @@
 </style>
 </head>
 <body>
-<a class="home-btn" href="index.html" title="Back to The Spectra">⌂</a>
+<a class="home-btn" href="index.html" title="Back to The Spectra">⌂ Home</a>
 <div class="wrap">
   <header>
     <h1>The Basketball Spectrum</h1>
@@ -430,7 +440,7 @@
   </div>
 
   <footer>
-    All axes are career box-score stats, approximate through June 2026. Steals and blocks were not tracked before 1973-74, so pre-era careers (Russell, Wilt, Oscar) carry historians' estimates.<br>
+    All axes are career box-score stats — the three "Season" axes are single-season career highs — approximate through June 2026. Steals and blocks were not tracked before 1973-74, so pre-era careers (Russell, Wilt, Oscar) carry historians' estimates.<br>
     100 players across six decades — heights from Muggsy Bogues (5'3\") to Manute Bol (7'7\"). Pre-1980 legends shot 0% from three because the line did not exist yet; we plot it anyway.<br>
     Hover a dot for the scouting card — highlights go to YouTube, career numbers to Basketball-Reference.
   </footer>
@@ -475,116 +485,122 @@ const METRICS = [
     blurb:"Championships won. Bill Russell has eleven. Eleven." },
   { k:"rel",    label:"Debut",        lo:"🏛️ short-shorts era", hi:"👶 new school",
     blurb:"Rookie season — six decades of hoops." },
+  { k:"s3m",    label:"Season 3PM",   lo:"🦕 made zero, ever", hi:"💦 402 and raining",
+    blurb:"Most threes made in a single season — Curry's 402 is the ceiling." },
+  { k:"spts",   label:"Season Points",lo:"🔋 energy guy", hi:"🌋 the 4,029 mountain",
+    blurb:"Most total points in a single season — Wilt's 4,029 will never be touched." },
+  { k:"sdd",    label:"Season Dbl-Dbls", lo:"📎 occasional", hi:"🔁 one every single night",
+    blurb:"Most double-doubles in a single season." },
 ];
 
 // ---------------- data ----------------
-// [name, pos, heightIn, ft%, ppg, apg, rpg, 3p%, rings, debutYear, defense, clutch, aura, note, youtubeId, bpg, spg, allStarCount]
+// [name, pos, heightIn, ft%, ppg, apg, rpg, 3p%, rings, debutYear, defense, clutch, aura, note, youtubeId, bpg, spg, allStarCount, bestSeason3PM, bestSeasonPts, bestSeasonDD]
 const SONGS = [
-["Magic Johnson", "Point Guard", 81, 84.8, 19.5, 11.2, 7.2, 30.3, 5, 1979, 60, 90, 95, "A 6'9\" point guard who played center in a Finals as a rookie. Showtime incarnate.", "prvjNFHSOj0", 0.4, 1.9, 12],
-["Stephen Curry", "Point Guard", 74, 91.0, 24.7, 6.4, 4.7, 42.6, 4, 2009, 55, 92, 95, "Changed the geometry of the sport from 30 feet. Best free-throw shooter ever, too.", "NHhTMh0nURA", 0.2, 1.5, 11],
-["Chris Paul", "Point Guard", 72, 87.0, 17.5, 9.4, 4.5, 36.9, 0, 2005, 80, 70, 70, "The Point God. Twelve thousand assists and one missing parade.", "QHsntNaDZh0", 0.1, 2.1, 12],
-["Allen Iverson", "Point Guard", 72, 78.0, 26.7, 6.2, 3.7, 31.3, 0, 1996, 55, 85, 98, "Six feet, 165 pounds, crossed up a dynasty. We're talking about practice.", "rvz-p65_ZO0", 0.2, 2.2, 11],
-["John Stockton", "Point Guard", 73, 82.6, 13.1, 10.5, 2.7, 38.4, 0, 1984, 75, 75, 40, "All-time assists leader by a country mile. Wore the same shorts for 19 years.", "QJOYt5pkN4I", 0.2, 2.2, 10],
-["Steve Nash", "Point Guard", 75, 90.4, 14.3, 8.5, 3.0, 42.8, 0, 1996, 35, 75, 70, "Back-to-back MVPs; seven seconds or less; hair always in playoff form.", "8EkILfAOk68", 0.1, 0.7, 8],
-["Russell Westbrook", "Point Guard", 75, 78.0, 21.7, 8.1, 7.1, 30.5, 0, 2008, 60, 65, 85, "Averaged a triple-double for a whole season. Then did it three more times.", "AG63lkuQ0bI", 0.3, 1.6, 9],
-["Kyrie Irving", "Point Guard", 74, 88.5, 23.5, 5.7, 3.9, 39.4, 1, 2011, 45, 93, 80, "The most beautiful handle the game has produced, and THE shot in Game 7.", "R0PMYEeTH3A", 0.4, 1.3, 9],
-["Damian Lillard", "Point Guard", 74, 89.7, 25.1, 6.7, 4.2, 37.1, 0, 2012, 45, 95, 80, "Dame Time is a legally recognized time zone. Series-enders from the logo.", "RxxueDqPAyU", 0.3, 0.9, 9],
-["Jason Kidd", "Point Guard", 76, 78.5, 12.6, 8.7, 6.3, 34.9, 1, 1994, 85, 70, 60, "Triple-double machine who saw the whole floor like a chessboard.", "fv07_6Y4HvQ", 0.3, 1.9, 10],
-["Oscar Robertson", "Point Guard", 77, 83.8, 25.7, 9.5, 7.5, 0.0, 1, 1960, 70, 80, 70, "Averaged a triple-double in 1962, before they even tracked it as a thing.", "85IEXNTmu_U", 0.4, 1.1, 12],
-["Muggsy Bogues", "Point Guard", 63, 82.8, 7.7, 7.6, 2.6, 27.8, 0, 1987, 70, 50, 75, "5'3\" and played 14 NBA seasons. Heart measured in stories, not inches.", "uXpbylUMawM", 0.0, 1.5, 0],
-["Luka Doncic", "Point Guard", 79, 73.7, 28.6, 8.3, 8.7, 34.3, 0, 2018, 45, 90, 85, "Stepback in five languages. Complains in six.", "dO14Pt11sE8", 0.4, 1.2, 6],
-["Shai Gilgeous-Alexander", "Point Guard", 78, 88.0, 25.6, 5.5, 4.8, 35.3, 1, 2018, 75, 88, 80, "Free-throw merchant turned MVP. Smoothest mid-range in the modern game.", "LgY4QpU4Yss", 0.9, 1.3, 4],
-["Ja Morant", "Point Guard", 74, 76.0, 22.5, 7.4, 4.8, 32.0, 0, 2019, 40, 80, 85, "Gravity is a suggestion. The dunks arrive before the defense does.", "ARK5aoKBIw0", 0.3, 1.1, 2],
-["Michael Jordan", "Shooting Guard", 78, 83.5, 30.1, 5.3, 6.2, 32.7, 6, 1984, 95, 100, 100, "Six Finals, six rings, six Finals MVPs. The shrug. The flu game. The bar.", "jbW4f60dCNA", 0.8, 2.3, 14],
-["Kobe Bryant", "Shooting Guard", 78, 83.7, 25.0, 4.7, 5.2, 32.9, 5, 1996, 85, 96, 95, "81 points one night. Mamba Mentality is a curriculum now.", "1fjhIWJSxfw", 0.5, 1.4, 18],
-["Dwyane Wade", "Shooting Guard", 76, 76.5, 22.0, 5.4, 4.7, 29.3, 3, 2003, 75, 90, 85, "2006 Finals: averaged 34.7 and personally relocated a championship.", "BjTcXjL2moE", 0.8, 1.5, 13],
-["James Harden", "Shooting Guard", 77, 86.1, 24.1, 7.1, 5.6, 36.2, 0, 2009, 40, 60, 70, "The stepback that launched a thousand free throws.", "rHG4uHOY5SM", 0.5, 1.5, 11],
-["Ray Allen", "Shooting Guard", 77, 89.4, 18.9, 3.4, 4.1, 40.0, 2, 1996, 60, 92, 65, "The corner three in Game 6 of 2013. Jesus Shuttlesworth saves.", "_J_csbymwXE", 0.2, 1.1, 10],
-["Reggie Miller", "Shooting Guard", 79, 88.8, 18.2, 3.0, 3.0, 39.5, 0, 1987, 55, 94, 80, "Eight points in nine seconds. Spike Lee has never emotionally recovered.", "rmme_HV1ccY", 0.2, 1.1, 5],
-["Klay Thompson", "Shooting Guard", 78, 84.7, 19.2, 2.3, 3.5, 41.3, 4, 2011, 80, 85, 70, "37 points in a quarter. 60 on eleven dribbles. Game 6 Klay is folklore.", "0JQ89g1xdSQ", 0.5, 0.8, 5],
-["Devin Booker", "Shooting Guard", 77, 86.8, 24.4, 4.8, 4.0, 35.4, 0, 2015, 60, 80, 70, "70 in Boston as a sophomore. Be legendary.", "y-OsHJYxg3k", 0.3, 0.9, 5],
-["Anthony Edwards", "Shooting Guard", 76, 78.5, 23.5, 4.4, 5.3, 36.0, 0, 2020, 65, 80, 90, "Prime swagger delivery vehicle. Calls everyone 'big fella,' dunks accordingly.", "5zBzMZnUoJk", 0.6, 1.2, 4],
-["Manu Ginobili", "Shooting Guard", 78, 82.7, 13.3, 3.8, 3.5, 36.9, 4, 2002, 70, 88, 75, "The Eurostep's chief evangelist. Sixth man, first in chaos.", "AJUhzQEPCvE", 0.3, 1.3, 2],
-["Vince Carter", "Shooting Guard", 78, 79.8, 16.7, 3.1, 4.3, 37.1, 0, 1998, 50, 70, 92, "The 2000 dunk contest was a religious event. Half-man, half-amazing, 22 seasons.", "-nLPh8MTAd4", 0.6, 1.0, 8],
-["LeBron James", "Small Forward", 81, 73.5, 27.1, 7.4, 7.5, 34.9, 4, 2003, 80, 88, 98, "All-time scoring leader, four rings in three cities, chase-down block included.", "-9lP95Qo-I0", 0.7, 1.5, 21],
-["Kevin Durant", "Small Forward", 83, 88.3, 27.2, 4.4, 7.0, 38.8, 2, 2007, 65, 90, 80, "Seven feet of pull-up jumper. The most unguardable shot since the skyhook.", "e0cKk6Vhyws", 1.1, 1.1, 15],
-["Larry Bird", "Small Forward", 81, 88.6, 24.3, 6.3, 10.0, 37.6, 3, 1979, 70, 95, 92, "Told defenders the play and ran it anyway. Won a three-point contest in a warmup jacket.", "hcXv0JtzNQA", 0.8, 1.7, 12],
-["Kawhi Leonard", "Small Forward", 79, 85.7, 19.9, 3.0, 6.4, 38.7, 2, 2011, 95, 90, 55, "The 2019 Game 7 bouncer. Board man gets paid; fun guy laughs in fax-machine.", "xxueY7lyF5k", 0.6, 1.6, 6],
-["Jayson Tatum", "Small Forward", 80, 83.2, 23.3, 4.0, 7.2, 37.4, 1, 2017, 70, 75, 70, "Banner 18's cornerstone; the bag gets deeper every May.", "UzoBGQlNyEY", 0.6, 1.1, 6],
-["Carmelo Anthony", "Small Forward", 79, 81.4, 22.5, 2.7, 6.2, 35.5, 0, 2003, 40, 80, 80, "The jab step had its own gravitational field. Olympic Melo remains undefeated.", "Ut29ViTVqQM", 0.5, 1.0, 10],
-["Scottie Pippen", "Small Forward", 80, 70.4, 16.1, 5.2, 6.4, 32.6, 6, 1987, 95, 70, 65, "The best Robin ever, and a top-five defender of any era, any costume.", "T8_GiznzWbk", 0.8, 2.0, 7],
-["Julius Erving", "Small Forward", 79, 77.7, 22.0, 3.9, 6.7, 26.1, 1, 1971, 65, 85, 95, "Dr. J took off from the free-throw line and basketball never landed.", "zj4Tocdywmc", 1.5, 1.8, 11],
-["Jimmy Butler", "Small Forward", 79, 84.3, 18.3, 4.3, 5.3, 32.3, 0, 2011, 80, 92, 85, "Playoff Jimmy is a separate, much scarier person. Emotionally unavailable, professionally lethal.", "0RB6OD7cW04", 0.5, 1.6, 6],
-["Tracy McGrady", "Small Forward", 80, 74.6, 19.6, 4.4, 5.6, 33.8, 0, 1997, 50, 85, 80, "13 points in 33 seconds. The sleepy eyes were a trap.", "NollBuDyU6Q", 0.9, 1.2, 7],
-["Tim Duncan", "Power Forward", 83, 69.6, 19.0, 3.0, 10.8, 17.9, 5, 1997, 95, 85, 45, "The Big Fundamental. Two decades of bank shots and quiet excellence.", "OL1sORY3Kh4", 2.2, 0.7, 15],
-["Giannis Antetokounmpo", "Power Forward", 83, 69.0, 23.3, 4.9, 9.9, 28.8, 1, 2013, 85, 80, 85, "From selling sunglasses in Athens to a 50-piece in a closeout Finals game.", "rp8mc34NztY", 1.2, 1.1, 10],
-["Dirk Nowitzki", "Power Forward", 84, 87.9, 20.7, 2.4, 7.5, 38.0, 1, 1998, 50, 90, 75, "The one-legged fadeaway that launched a thousand imitators. 2011 was a heist.", "BfixJPEky1I", 0.8, 0.8, 14],
-["Karl Malone", "Power Forward", 81, 74.2, 25.0, 3.6, 10.1, 27.4, 0, 1985, 70, 60, 60, "The Mailman delivered for 18 seasons — except, famously, on Sundays in June.", "lbrMplWW3lc", 0.8, 1.4, 14],
-["Charles Barkley", "Power Forward", 78, 73.5, 22.1, 3.9, 11.7, 26.6, 0, 1984, 60, 75, 92, "6'6\" and led the league in rebounding. Turrible takes, incredible game.", "jJJDQe7jD3E", 0.8, 1.5, 11],
-["Kevin Garnett", "Power Forward", 83, 78.9, 17.8, 3.7, 10.0, 27.5, 1, 1995, 95, 75, 90, "ANYTHING IS POSSIBLE. Intensity that needed its own zip code.", "0mhUlZl3tyU", 1.4, 1.3, 15],
-["Anthony Davis", "Power Forward", 82, 79.5, 24.1, 2.6, 10.4, 30.0, 1, 2012, 90, 75, 60, "The brow, the blocks, the bubble title. Health sold separately.", "0ufyaXWbsnc", 2.3, 1.3, 10],
-["Draymond Green", "Power Forward", 78, 71.3, 8.7, 5.6, 6.9, 31.5, 4, 2012, 95, 70, 80, "Triple-single energy with championship gravity. The podcast is always live.", "RnbnX10Z0CI", 0.9, 1.4, 4],
-["Dennis Rodman", "Power Forward", 79, 58.4, 7.3, 1.8, 13.1, 23.1, 5, 1986, 95, 50, 90, "Led the league in rebounds and chaos seven years straight.", "XBoVDIvOrfI", 0.6, 0.7, 2],
-["Pau Gasol", "Power Forward", 84, 75.3, 17.0, 3.2, 9.2, 36.8, 2, 2001, 65, 75, 55, "The skill big who made the Kobe years rings. Elbow passes like poetry.", "xYP2EFEjqxc", 1.6, 0.5, 6],
-["Kareem Abdul-Jabbar", "Center", 86, 72.1, 24.6, 3.6, 11.2, 5.6, 6, 1969, 85, 90, 80, "The skyhook: unblocked for twenty years and counting.", "6dCR8B0SFp4", 2.6, 0.9, 19],
-["Wilt Chamberlain", "Center", 85, 51.1, 30.1, 4.4, 22.9, 0.0, 2, 1959, 85, 70, 95, "Scored 100 in a game. Led the league in assists once, out of spite.", "qfczQovODz8", 8.8, 1.0, 13],
-["Shaquille O'Neal", "Center", 85, 52.7, 23.7, 2.5, 10.9, 4.5, 4, 1992, 75, 70, 97, "The most dominant physical force the league has met. Free throws sold separately.", "3VlMSo7AXow", 2.3, 0.6, 15],
-["Hakeem Olajuwon", "Center", 84, 71.2, 21.8, 2.5, 11.1, 20.2, 2, 1984, 98, 88, 70, "The Dream Shake sent half the Hall of Fame the wrong direction.", "_m8OeZWbcOE", 3.1, 1.7, 12],
-["Bill Russell", "Center", 82, 56.1, 15.1, 4.3, 22.5, 0.0, 11, 1956, 100, 95, 85, "Eleven rings in thirteen seasons. They named the Finals MVP trophy after him.", "qT5GlgXrX-0", 8.1, 1.0, 12],
-["Nikola Jokic", "Center", 83, 82.8, 21.6, 7.0, 10.7, 35.0, 1, 2015, 60, 90, 75, "Sees passes that don't exist yet. Would rather be home with his horses.", "7A-QGpW2GnA", 0.7, 1.3, 8],
-["Joel Embiid", "Center", 84, 81.4, 27.7, 3.6, 11.2, 33.5, 0, 2016, 80, 70, 75, "An MVP who shoots like a guard and posts like it's 1995. Trust the process.", "h_kQH5itWsg", 1.7, 0.9, 7],
-["Victor Wembanyama", "Center", 88, 80.3, 22.5, 3.8, 10.8, 33.0, 0, 2023, 98, 75, 90, "The scouting report just says 'alien.' Blocks shots that haven't been attempted yet.", "vqsKhehN38A", 3.6, 1.2, 2],
-["David Robinson", "Center", 85, 73.6, 21.1, 2.5, 10.6, 25.0, 2, 1989, 95, 70, 60, "The Admiral: Navy officer, MVP, 71-point game, gentleman.", "jM4oY9OPt04", 3.0, 1.4, 10],
-["Patrick Ewing", "Center", 84, 74.0, 21.0, 1.9, 9.8, 15.2, 0, 1985, 85, 65, 60, "Carried the 90s Knicks on two surgically repaired knees and one snarl.", "sgI0YCVse9U", 2.4, 1.0, 11],
-["Moses Malone", "Center", 82, 76.9, 20.3, 1.3, 12.3, 10.0, 1, 1976, 70, 80, 65, "Fo', fo', fo'. Called the sweep, then nearly did it.", "x8ynWTvgIuA", 1.3, 0.8, 12],
-["Yao Ming", "Center", 90, 83.3, 19.0, 1.6, 9.2, 20.0, 0, 2002, 70, 65, 75, "7'6\" with a feathery touch; a bridge between basketball worlds.", "Ve3H4tYj47c", 1.9, 0.4, 8],
-["Manute Bol", "Center", 91, 56.1, 2.6, 0.3, 4.2, 21.0, 0, 1985, 90, 30, 85, "7'7\". Blocked shots by the dozen and once hit six threes in a half.", "hePuvt8REqE", 3.3, 0.3, 0],
-["Rudy Gobert", "Center", 85, 63.8, 12.0, 1.3, 11.7, 0.0, 0, 2013, 96, 45, 45, "Four DPOYs; the rim has a restraining order against everyone else.", "N1e4cGAFJK8", 2.1, 0.7, 3],
-["Jalen Brunson", "Point Guard", 74, 82.5, 20.5, 5.6, 3.2, 37.0, 0, 2018, 45, 92, 75, "The Garden's favorite son — playoff 40-pieces at 6'2\" with a fourth-grade center of gravity.", "9I8nrkTNFOU", 0.2, 0.8, 3],
-["Cade Cunningham", "Point Guard", 78, 84.0, 22.5, 7.3, 4.9, 34.5, 0, 2021, 60, 80, 75, "Detroit's restoration project, completed: First Team All-NBA in 2026 and the Pistons matter again.", "c-TG9cCKOUM", 0.7, 1.0, 3],
-["Donovan Mitchell", "Shooting Guard", 75, 83.0, 24.8, 4.6, 4.4, 36.4, 0, 2017, 55, 90, 75, "Spida dropped 71 in a game, and somehow that's only the third thing people mention.", "Ap3IS9RPxFI", 0.3, 1.4, 7],
-["Jaylen Brown", "Small Forward", 78, 73.5, 21.5, 2.9, 5.3, 36.0, 1, 2016, 80, 80, 70, "2024 Finals MVP — the chip on the shoulder now wears a ring.", "wp4RtGyPm4A", 0.4, 1.1, 4],
-["Evan Mobley", "Power Forward", 83, 71.5, 16.5, 3.0, 9.0, 33.0, 0, 2021, 95, 65, 60, "2025 Defensive Player of the Year — long arms, longer future.", "03p5rQrphNc", 1.5, 0.8, 2],
-["Julius Randle", "Power Forward", 80, 73.0, 19.5, 3.6, 9.2, 33.5, 0, 2014, 50, 65, 60, "Lefty bully-ball aesthetics, two All-NBA nods, and the full New York emotional experience.", "jftF75YTfWM", 0.4, 0.7, 3],
-["DeMar DeRozan", "Shooting Guard", 78, 84.5, 21.0, 4.0, 4.3, 29.5, 0, 2009, 45, 88, 70, "The mid-range's last great defender — keeping a dying art form not just alive but All-NBA.", "5aC-SLWMrt4", 0.3, 1.0, 6],
-["Paul George", "Small Forward", 80, 84.5, 20.5, 3.7, 6.3, 38.0, 0, 2010, 85, 65, 70, "PG-13: two-way wing excellence, six All-NBA nods, one podcast too many.", "nB8k4nuBwx8", 0.4, 1.7, 9],
-["Isaiah Thomas", "Point Guard", 69, 87.0, 17.6, 4.8, 2.4, 36.0, 0, 2011, 30, 88, 75, "5'9\", last pick of the draft, fourth in MVP voting. The King in the Fourth.", "KUWK0sIzARg", 0.1, 0.9, 2],
-["Kyle Lowry", "Point Guard", 72, 79.5, 14.7, 6.2, 4.3, 36.7, 1, 2006, 75, 75, 65, "Charge-taking champion of the world; Toronto's beating heart in 2019.", "HElflzYcIEk", 0.3, 1.4, 6],
-["Marc Gasol", "Center", 83, 75.5, 14.0, 3.4, 7.4, 35.2, 1, 2008, 90, 70, 55, "DPOY brain in a seven-foot frame — the Gasol who chose passing angles over posters.", "eMa-xGEtKXQ", 1.4, 0.9, 3],
-["LaMarcus Aldridge", "Power Forward", 83, 81.0, 19.1, 2.0, 8.1, 32.0, 0, 2006, 60, 70, 50, "The fadeaway from the left block, ten thousand times, beautifully.", "PmNYlvQ0mZ8", 1.1, 0.7, 7],
-["DeMarcus Cousins", "Center", 82, 73.8, 19.6, 3.0, 10.2, 33.2, 0, 2010, 55, 55, 75, "Boogie: the most talented center of his era, and the most technical fouls too.", "VE4dBclkBe4", 1.1, 1.4, 4],
-["DeAndre Jordan", "Center", 83, 47.5, 8.8, 1.2, 10.3, 5.0, 1, 2008, 75, 40, 60, "Lob City's finisher. Career 47% from the line — hack-a-DJ was a league-wide strategy.", "Y6CsSW2fNo0", 1.7, 0.6, 1],
-["Pascal Siakam", "Power Forward", 80, 77.0, 17.5, 3.4, 6.7, 33.0, 1, 2016, 70, 70, 60, "Spicy P: from Cameroonian camps to a ring and a spin move that defies scouting.", "uxsj4iA_okQ", 0.6, 0.8, 3],
-["Dwight Howard", "Center", 82, 56.7, 15.7, 1.3, 11.8, 21.0, 1, 2004, 95, 50, 75, "Three straight DPOYs, eight All-NBA teams, one Superman cape.", "c8nnjY0WQfw", 1.8, 0.9, 8],
-["Derrick Rose", "Point Guard", 74, 82.3, 17.4, 5.2, 3.2, 31.5, 0, 2008, 45, 80, 85, "Youngest MVP ever. The what-if that still hurts league-wide.", "Xrpkg3Rmln0", 0.3, 0.8, 3],
-["Tony Parker", "Point Guard", 74, 75.1, 15.5, 5.6, 2.7, 32.4, 4, 2001, 55, 85, 60, "The teardrop merchant — four rings at full sprint.", "4VAd4QdXusM", 0.1, 0.8, 6],
-["Chris Bosh", "Power Forward", 83, 79.9, 19.2, 2.0, 8.5, 33.5, 2, 2003, 70, 70, 65, "The Heatles' quiet engine; sacrificed stats for rings and made it look dignified.", "207zqesKHuQ", 1.0, 0.8, 11],
-["Amar'e Stoudemire", "Power Forward", 82, 76.0, 18.9, 1.2, 7.8, 24.0, 0, 2002, 40, 70, 70, "STAT: pick-and-roll detonation specialist of the Seven Seconds or Less Suns.", "_vgZ3DflAKY", 1.2, 0.9, 6],
-["Blake Griffin", "Power Forward", 81, 69.0, 19.0, 4.0, 8.0, 33.0, 0, 2010, 45, 65, 85, "Jumped over a car, evolved into a point-forward, lives rent-free in posters.", "hoarqsrBULo", 0.5, 0.9, 6],
-["Gilbert Arenas", "Point Guard", 76, 80.3, 20.7, 5.3, 3.9, 35.1, 0, 2001, 40, 85, 80, "Agent Zero: called game-winners before halftime. Hibachi.", "nusHVIvTI1I", 0.2, 1.6, 3],
-["Deron Williams", "Point Guard", 75, 82.2, 16.3, 8.1, 3.1, 35.7, 0, 2005, 50, 70, 55, "The crossover that briefly won the Deron-vs-CP3 debate.", "kd0dsWXsMlQ", 0.2, 1.0, 3],
-["Brandon Roy", "Shooting Guard", 78, 80.0, 18.8, 4.7, 4.3, 34.8, 0, 2006, 50, 85, 65, "Three years of brilliance before his knees called time. Portland still mourns.", "KnGs57A-O0w", 0.3, 1.0, 3],
-["Andrew Bynum", "Center", 84, 69.2, 11.5, 1.4, 7.7, 10.0, 2, 2005, 70, 55, 50, "Two rings at 22, All-NBA at 24, bowling anecdotes by 26.", "FjpjUxnxBQk", 1.6, 0.4, 1],
-["Kevin Love", "Power Forward", 82, 82.5, 17.0, 2.4, 10.5, 37.0, 1, 2008, 45, 65, 65, "Outlet passes like artillery; once averaged 26-and-31 in a game. Literally 31.", "nJa0j-lJzio", 0.5, 0.7, 5],
-["Joakim Noah", "Center", 83, 71.0, 8.8, 2.8, 9.0, 15.0, 0, 2007, 90, 60, 70, "2014 DPOY and the best passing center of his decade; played every possession like a final.", "8hEg6Z2fJZM", 1.3, 0.9, 2],
-["Gary Payton", "Point Guard", 76, 72.9, 16.3, 6.7, 3.9, 31.7, 1, 1990, 98, 75, 85, "The Glove: the only point guard ever to win DPOY. Your ear has never recovered from the trash talk.", "YfS8lEzIVSo", 0.2, 1.8, 9],
-["Chauncey Billups", "Point Guard", 75, 89.4, 15.2, 5.4, 2.9, 38.7, 1, 1997, 65, 92, 65, "Mr. Big Shot — 2004 Finals MVP for the team with no superstar, which made him one.", "Ca9TVg9ARjs", 0.2, 1.0, 5],
-["Sam Cassell", "Point Guard", 75, 86.1, 15.7, 6.0, 3.2, 33.5, 3, 1993, 50, 85, 75, "Three rings, one dance, infinite big-shot confidence.", "2DtWVc1AJf4", 0.2, 1.2, 1],
-["Baron Davis", "Point Guard", 75, 71.1, 16.1, 7.2, 3.8, 32.0, 0, 1999, 60, 80, 80, "We Believe. The dunk on Kirilenko is a regional holiday in Oakland.", "k9NUCr38ykE", 0.4, 1.8, 2],
-["Eddie Jones", "Shooting Guard", 78, 80.5, 14.8, 3.3, 4.0, 37.1, 0, 1994, 80, 65, 50, "All-defense smoothness; the trade that broke young-Kobe-era Lakers fans' hearts.", "sp7Inn-NBoQ", 0.6, 1.7, 3],
-["Grant Hill", "Small Forward", 80, 76.9, 16.7, 4.1, 6.0, 31.4, 0, 1994, 70, 75, 80, "Co-Rookie of the Year, proto-LeBron point forward; the ankle stole a top-ten career.", "p_KT5CM24lg", 0.6, 1.2, 7],
-["Peja Stojakovic", "Small Forward", 82, 89.5, 17.0, 1.8, 4.7, 40.1, 1, 1998, 35, 75, 60, "One of the purest strokes ever recorded; 2002 still makes Sacramento scream.", "nDtYeF2IsXg", 0.1, 0.9, 3],
-["Chris Webber", "Power Forward", 82, 64.9, 20.7, 4.2, 9.8, 29.9, 0, 1993, 65, 60, 80, "The hub of Sacramento's beautiful basketball — a passing big before it was meta.", "ZOh0wnQ1VZU", 1.4, 1.4, 5],
-["Jermaine O'Neal", "Power Forward", 83, 71.7, 13.2, 1.4, 7.2, 14.0, 0, 1996, 75, 60, 55, "Prep-to-pro patience rewarded: six straight All-Star teams in Indiana.", "T5Rg1fcaWEs", 1.8, 0.5, 6],
-["Elton Brand", "Power Forward", 81, 74.0, 15.9, 2.1, 8.5, 12.0, 0, 1999, 70, 60, 45, "Twenty-and-ten metronome on teams that never got the memo.", "0nh9Zke6ySU", 1.6, 1.0, 2],
-["Alonzo Mourning", "Center", 82, 69.2, 17.1, 1.1, 8.5, 24.7, 1, 1992, 95, 70, 80, "Two DPOYs, one kidney transplant, zero quit. Flexed after every block; earned every flex.", "buX2Ml4qTxM", 2.8, 0.5, 7],
-["Dikembe Mutombo", "Center", 86, 68.4, 9.8, 1.0, 10.3, 10.0, 0, 1991, 98, 50, 85, "Four DPOYs and the finger wag — not in his house, not in anyone's house.", "nZUL9eugfKA", 2.8, 0.4, 8],
-["Ben Wallace", "Center", 81, 41.4, 5.7, 1.3, 9.6, 13.0, 1, 1996, 98, 55, 75, "Undrafted: four DPOYs, a ring, the best afro in league history. 41% from the line, 100% from the heart.", "wPRLMb-AET4", 2.0, 1.3, 4],
+["Magic Johnson", "Point Guard", 81, 84.8, 19.5, 11.2, 7.2, 30.3, 5, 1979, 60, 90, 95, "A 6'9\" point guard who played center in a Finals as a rookie. Showtime incarnate.", "prvjNFHSOj0", 0.4, 1.9, 12, 106, 1909, 58],
+["Stephen Curry", "Point Guard", 74, 91.0, 24.7, 6.4, 4.7, 42.6, 4, 2009, 55, 92, 95, "Changed the geometry of the sport from 30 feet. Best free-throw shooter ever, too.", "NHhTMh0nURA", 0.2, 1.5, 11, 402, 2375, 20],
+["Chris Paul", "Point Guard", 72, 87.0, 17.5, 9.4, 4.5, 36.9, 0, 2005, 80, 70, 70, "The Point God. Twelve thousand assists and one missing parade.", "QHsntNaDZh0", 0.1, 2.1, 12, 183, 1684, 48],
+["Allen Iverson", "Point Guard", 72, 78.0, 26.7, 6.2, 3.7, 31.3, 0, 1996, 55, 85, 98, "Six feet, 165 pounds, crossed up a dynasty. We're talking about practice.", "rvz-p65_ZO0", 0.2, 2.2, 11, 104, 2377, 10],
+["John Stockton", "Point Guard", 73, 82.6, 13.1, 10.5, 2.7, 38.4, 0, 1984, 75, 75, 40, "All-time assists leader by a country mile. Wore the same shorts for 19 years.", "QJOYt5pkN4I", 0.2, 2.2, 10, 90, 1400, 65],
+["Steve Nash", "Point Guard", 75, 90.4, 14.3, 8.5, 3.0, 42.8, 0, 1996, 35, 75, 70, "Back-to-back MVPs; seven seconds or less; hair always in playoff form.", "8EkILfAOk68", 0.1, 0.7, 8, 179, 1480, 53],
+["Russell Westbrook", "Point Guard", 75, 78.0, 21.7, 8.1, 7.1, 30.5, 0, 2008, 60, 65, 85, "Averaged a triple-double for a whole season. Then did it three more times.", "AG63lkuQ0bI", 0.3, 1.6, 9, 200, 2558, 62],
+["Kyrie Irving", "Point Guard", 74, 88.5, 23.5, 5.7, 3.9, 39.4, 1, 2011, 45, 93, 80, "The most beautiful handle the game has produced, and THE shot in Game 7.", "R0PMYEeTH3A", 0.4, 1.3, 9, 230, 1816, 12],
+["Damian Lillard", "Point Guard", 74, 89.7, 25.1, 6.7, 4.2, 37.1, 0, 2012, 45, 95, 80, "Dame Time is a legally recognized time zone. Series-enders from the logo.", "RxxueDqPAyU", 0.3, 0.9, 9, 275, 2000, 18],
+["Jason Kidd", "Point Guard", 76, 78.5, 12.6, 8.7, 6.3, 34.9, 1, 1994, 85, 70, 60, "Triple-double machine who saw the whole floor like a chessboard.", "fv07_6Y4HvQ", 0.3, 1.9, 10, 145, 1300, 58],
+["Oscar Robertson", "Point Guard", 77, 83.8, 25.7, 9.5, 7.5, 0.0, 1, 1960, 70, 80, 70, "Averaged a triple-double in 1962, before they even tracked it as a thing.", "85IEXNTmu_U", 0.4, 1.1, 12, 0, 2432, 76],
+["Muggsy Bogues", "Point Guard", 63, 82.8, 7.7, 7.6, 2.6, 27.8, 0, 1987, 70, 50, 75, "5'3\" and played 14 NBA seasons. Heart measured in stories, not inches.", "uXpbylUMawM", 0.0, 1.5, 0, 20, 866, 22],
+["Luka Doncic", "Point Guard", 79, 73.7, 28.6, 8.3, 8.7, 34.3, 0, 2018, 45, 90, 85, "Stepback in five languages. Complains in six.", "dO14Pt11sE8", 0.4, 1.2, 6, 284, 2370, 50],
+["Shai Gilgeous-Alexander", "Point Guard", 78, 88.0, 25.6, 5.5, 4.8, 35.3, 1, 2018, 75, 88, 80, "Free-throw merchant turned MVP. Smoothest mid-range in the modern game.", "LgY4QpU4Yss", 0.9, 1.3, 4, 160, 2484, 12],
+["Ja Morant", "Point Guard", 74, 76.0, 22.5, 7.4, 4.8, 32.0, 0, 2019, 40, 80, 85, "Gravity is a suggestion. The dunks arrive before the defense does.", "ARK5aoKBIw0", 0.3, 1.1, 2, 121, 1600, 20],
+["Michael Jordan", "Shooting Guard", 78, 83.5, 30.1, 5.3, 6.2, 32.7, 6, 1984, 95, 100, 100, "Six Finals, six rings, six Finals MVPs. The shrug. The flu game. The bar.", "jbW4f60dCNA", 0.8, 2.3, 14, 111, 3041, 25],
+["Kobe Bryant", "Shooting Guard", 78, 83.7, 25.0, 4.7, 5.2, 32.9, 5, 1996, 85, 96, 95, "81 points one night. Mamba Mentality is a curriculum now.", "1fjhIWJSxfw", 0.5, 1.4, 18, 180, 2832, 15],
+["Dwyane Wade", "Shooting Guard", 76, 76.5, 22.0, 5.4, 4.7, 29.3, 3, 2003, 75, 90, 85, "2006 Finals: averaged 34.7 and personally relocated a championship.", "BjTcXjL2moE", 0.8, 1.5, 13, 88, 2386, 25],
+["James Harden", "Shooting Guard", 77, 86.1, 24.1, 7.1, 5.6, 36.2, 0, 2009, 40, 60, 70, "The stepback that launched a thousand free throws.", "rHG4uHOY5SM", 0.5, 1.5, 11, 378, 2818, 38],
+["Ray Allen", "Shooting Guard", 77, 89.4, 18.9, 3.4, 4.1, 40.0, 2, 1996, 60, 92, 65, "The corner three in Game 6 of 2013. Jesus Shuttlesworth saves.", "_J_csbymwXE", 0.2, 1.1, 10, 269, 1812, 8],
+["Reggie Miller", "Shooting Guard", 79, 88.8, 18.2, 3.0, 3.0, 39.5, 0, 1987, 55, 94, 80, "Eight points in nine seconds. Spike Lee has never emotionally recovered.", "rmme_HV1ccY", 0.2, 1.1, 5, 229, 2016, 5],
+["Klay Thompson", "Shooting Guard", 78, 84.7, 19.2, 2.3, 3.5, 41.3, 4, 2011, 80, 85, 70, "37 points in a quarter. 60 on eleven dribbles. Game 6 Klay is folklore.", "0JQ89g1xdSQ", 0.5, 0.8, 5, 276, 1771, 6],
+["Devin Booker", "Shooting Guard", 77, 86.8, 24.4, 4.8, 4.0, 35.4, 0, 2015, 60, 80, 70, "70 in Boston as a sophomore. Be legendary.", "y-OsHJYxg3k", 0.3, 0.9, 5, 185, 1866, 12],
+["Anthony Edwards", "Shooting Guard", 76, 78.5, 23.5, 4.4, 5.3, 36.0, 0, 2020, 65, 80, 90, "Prime swagger delivery vehicle. Calls everyone 'big fella,' dunks accordingly.", "5zBzMZnUoJk", 0.6, 1.2, 4, 225, 2180, 10],
+["Manu Ginobili", "Shooting Guard", 78, 82.7, 13.3, 3.8, 3.5, 36.9, 4, 2002, 70, 88, 75, "The Eurostep's chief evangelist. Sixth man, first in chaos.", "AJUhzQEPCvE", 0.3, 1.3, 2, 134, 1342, 8],
+["Vince Carter", "Shooting Guard", 78, 79.8, 16.7, 3.1, 4.3, 37.1, 0, 1998, 50, 70, 92, "The 2000 dunk contest was a religious event. Half-man, half-amazing, 22 seasons.", "-nLPh8MTAd4", 0.6, 1.0, 8, 160, 2070, 12],
+["LeBron James", "Small Forward", 81, 73.5, 27.1, 7.4, 7.5, 34.9, 4, 2003, 80, 88, 98, "All-time scoring leader, four rings in three cities, chase-down block included.", "-9lP95Qo-I0", 0.7, 1.5, 21, 160, 2478, 47],
+["Kevin Durant", "Small Forward", 83, 88.3, 27.2, 4.4, 7.0, 38.8, 2, 2007, 65, 90, 80, "Seven feet of pull-up jumper. The most unguardable shot since the skyhook.", "e0cKk6Vhyws", 1.1, 1.1, 15, 185, 2592, 30],
+["Larry Bird", "Small Forward", 81, 88.6, 24.3, 6.3, 10.0, 37.6, 3, 1979, 70, 95, 92, "Told defenders the play and ran it anyway. Won a three-point contest in a warmup jacket.", "hcXv0JtzNQA", 0.8, 1.7, 12, 90, 2295, 52],
+["Kawhi Leonard", "Small Forward", 79, 85.7, 19.9, 3.0, 6.4, 38.7, 2, 2011, 95, 90, 55, "The 2019 Game 7 bouncer. Board man gets paid; fun guy laughs in fax-machine.", "xxueY7lyF5k", 0.6, 1.6, 6, 147, 1888, 15],
+["Jayson Tatum", "Small Forward", 80, 83.2, 23.3, 4.0, 7.2, 37.4, 1, 2017, 70, 75, 70, "Banner 18's cornerstone; the bag gets deeper every May.", "UzoBGQlNyEY", 0.6, 1.1, 6, 240, 2225, 28],
+["Carmelo Anthony", "Small Forward", 79, 81.4, 22.5, 2.7, 6.2, 35.5, 0, 2003, 40, 80, 80, "The jab step had its own gravitational field. Olympic Melo remains undefeated.", "Ut29ViTVqQM", 0.5, 1.0, 10, 157, 1920, 25],
+["Scottie Pippen", "Small Forward", 80, 70.4, 16.1, 5.2, 6.4, 32.6, 6, 1987, 95, 70, 65, "The best Robin ever, and a top-five defender of any era, any costume.", "T8_GiznzWbk", 0.8, 2.0, 7, 150, 1720, 30],
+["Julius Erving", "Small Forward", 79, 77.7, 22.0, 3.9, 6.7, 26.1, 1, 1971, 65, 85, 95, "Dr. J took off from the free-throw line and basketball never landed.", "zj4Tocdywmc", 1.5, 1.8, 11, 25, 2100, 40],
+["Jimmy Butler", "Small Forward", 79, 84.3, 18.3, 4.3, 5.3, 32.3, 0, 2011, 80, 92, 85, "Playoff Jimmy is a separate, much scarier person. Emotionally unavailable, professionally lethal.", "0RB6OD7cW04", 0.5, 1.6, 6, 104, 1816, 25],
+["Tracy McGrady", "Small Forward", 80, 74.6, 19.6, 4.4, 5.6, 33.8, 0, 1997, 50, 85, 80, "13 points in 33 seconds. The sleepy eyes were a trap.", "NollBuDyU6Q", 0.9, 1.2, 7, 173, 2407, 15],
+["Tim Duncan", "Power Forward", 83, 69.6, 19.0, 3.0, 10.8, 17.9, 5, 1997, 95, 85, 45, "The Big Fundamental. Two decades of bank shots and quiet excellence.", "OL1sORY3Kh4", 2.2, 0.7, 15, 10, 2091, 64],
+["Giannis Antetokounmpo", "Power Forward", 83, 69.0, 23.3, 4.9, 9.9, 28.8, 1, 2013, 85, 80, 85, "From selling sunglasses in Athens to a 50-piece in a closeout Finals game.", "rp8mc34NztY", 1.2, 1.1, 10, 89, 2222, 57],
+["Dirk Nowitzki", "Power Forward", 84, 87.9, 20.7, 2.4, 7.5, 38.0, 1, 1998, 50, 90, 75, "The one-legged fadeaway that launched a thousand imitators. 2011 was a heist.", "BfixJPEky1I", 0.8, 0.8, 14, 148, 2151, 46],
+["Karl Malone", "Power Forward", 81, 74.2, 25.0, 3.6, 10.1, 27.4, 0, 1985, 70, 60, 60, "The Mailman delivered for 18 seasons — except, famously, on Sundays in June.", "lbrMplWW3lc", 0.8, 1.4, 14, 16, 2540, 62],
+["Charles Barkley", "Power Forward", 78, 73.5, 22.1, 3.9, 11.7, 26.6, 0, 1984, 60, 75, 92, "6'6\" and led the league in rebounding. Turrible takes, incredible game.", "jJJDQe7jD3E", 0.8, 1.5, 11, 67, 2264, 65],
+["Kevin Garnett", "Power Forward", 83, 78.9, 17.8, 3.7, 10.0, 27.5, 1, 1995, 95, 75, 90, "ANYTHING IS POSSIBLE. Intensity that needed its own zip code.", "0mhUlZl3tyU", 1.4, 1.3, 15, 37, 1984, 71],
+["Anthony Davis", "Power Forward", 82, 79.5, 24.1, 2.6, 10.4, 30.0, 1, 2012, 90, 75, 60, "The brow, the blocks, the bubble title. Health sold separately.", "0ufyaXWbsnc", 2.3, 1.3, 10, 72, 2108, 54],
+["Draymond Green", "Power Forward", 78, 71.3, 8.7, 5.6, 6.9, 31.5, 4, 2012, 95, 70, 80, "Triple-single energy with championship gravity. The podcast is always live.", "RnbnX10Z0CI", 0.9, 1.4, 4, 100, 1134, 36],
+["Dennis Rodman", "Power Forward", 79, 58.4, 7.3, 1.8, 13.1, 23.1, 5, 1986, 95, 50, 90, "Led the league in rebounds and chaos seven years straight.", "XBoVDIvOrfI", 0.6, 0.7, 2, 12, 951, 60],
+["Pau Gasol", "Power Forward", 84, 75.3, 17.0, 3.2, 9.2, 36.8, 2, 2001, 65, 75, 55, "The skill big who made the Kobe years rings. Elbow passes like poetry.", "xYP2EFEjqxc", 1.6, 0.5, 6, 17, 1541, 55],
+["Kareem Abdul-Jabbar", "Center", 86, 72.1, 24.6, 3.6, 11.2, 5.6, 6, 1969, 85, 90, 80, "The skyhook: unblocked for twenty years and counting.", "6dCR8B0SFp4", 2.6, 0.9, 19, 1, 2822, 70],
+["Wilt Chamberlain", "Center", 85, 51.1, 30.1, 4.4, 22.9, 0.0, 2, 1959, 85, 70, 95, "Scored 100 in a game. Led the league in assists once, out of spite.", "qfczQovODz8", 8.8, 1.0, 13, 0, 4029, 80],
+["Shaquille O'Neal", "Center", 85, 52.7, 23.7, 2.5, 10.9, 4.5, 4, 1992, 75, 70, 97, "The most dominant physical force the league has met. Free throws sold separately.", "3VlMSo7AXow", 2.3, 0.6, 15, 1, 2344, 62],
+["Hakeem Olajuwon", "Center", 84, 71.2, 21.8, 2.5, 11.1, 20.2, 2, 1984, 98, 88, 70, "The Dream Shake sent half the Hall of Fame the wrong direction.", "_m8OeZWbcOE", 3.1, 1.7, 12, 21, 2140, 65],
+["Bill Russell", "Center", 82, 56.1, 15.1, 4.3, 22.5, 0.0, 11, 1956, 100, 95, 85, "Eleven rings in thirteen seasons. They named the Finals MVP trophy after him.", "qT5GlgXrX-0", 8.1, 1.0, 12, 0, 1436, 76],
+["Nikola Jokic", "Center", 83, 82.8, 21.6, 7.0, 10.7, 35.0, 1, 2015, 60, 90, 75, "Sees passes that don't exist yet. Would rather be home with his horses.", "7A-QGpW2GnA", 0.7, 1.3, 8, 130, 2072, 66],
+["Joel Embiid", "Center", 84, 81.4, 27.7, 3.6, 11.2, 33.5, 0, 2016, 80, 70, 75, "An MVP who shoots like a guard and posts like it's 1995. Trust the process.", "h_kQH5itWsg", 1.7, 0.9, 7, 90, 2184, 50],
+["Victor Wembanyama", "Center", 88, 80.3, 22.5, 3.8, 10.8, 33.0, 0, 2023, 98, 75, 90, "The scouting report just says 'alien.' Blocks shots that haven't been attempted yet.", "vqsKhehN38A", 3.6, 1.2, 2, 130, 1600, 50],
+["David Robinson", "Center", 85, 73.6, 21.1, 2.5, 10.6, 25.0, 2, 1989, 95, 70, 60, "The Admiral: Navy officer, MVP, 71-point game, gentleman.", "jM4oY9OPt04", 3.0, 1.4, 10, 6, 2383, 65],
+["Patrick Ewing", "Center", 84, 74.0, 21.0, 1.9, 9.8, 15.2, 0, 1985, 85, 65, 60, "Carried the 90s Knicks on two surgically repaired knees and one snarl.", "sgI0YCVse9U", 2.4, 1.0, 11, 6, 2347, 60],
+["Moses Malone", "Center", 82, 76.9, 20.3, 1.3, 12.3, 10.0, 1, 1976, 70, 80, 65, "Fo', fo', fo'. Called the sweep, then nearly did it.", "x8ynWTvgIuA", 1.3, 0.8, 12, 0, 2519, 70],
+["Yao Ming", "Center", 90, 83.3, 19.0, 1.6, 9.2, 20.0, 0, 2002, 70, 65, 75, "7'6\" with a feathery touch; a bridge between basketball worlds.", "Ve3H4tYj47c", 1.9, 0.4, 8, 1, 1465, 50],
+["Manute Bol", "Center", 91, 56.1, 2.6, 0.3, 4.2, 21.0, 0, 1985, 90, 30, 85, "7'7\". Blocked shots by the dozen and once hit six threes in a half.", "hePuvt8REqE", 3.3, 0.3, 0, 20, 344, 8],
+["Rudy Gobert", "Center", 85, 63.8, 12.0, 1.3, 11.7, 0.0, 0, 2013, 96, 45, 45, "Four DPOYs; the rim has a restraining order against everyone else.", "N1e4cGAFJK8", 2.1, 0.7, 3, 0, 1030, 58],
+["Jalen Brunson", "Point Guard", 74, 82.5, 20.5, 5.6, 3.2, 37.0, 0, 2018, 45, 92, 75, "The Garden's favorite son — playoff 40-pieces at 6'2\" with a fourth-grade center of gravity.", "9I8nrkTNFOU", 0.2, 0.8, 3, 175, 2212, 15],
+["Cade Cunningham", "Point Guard", 78, 84.0, 22.5, 7.3, 4.9, 34.5, 0, 2021, 60, 80, 75, "Detroit's restoration project, completed: First Team All-NBA in 2026 and the Pistons matter again.", "c-TG9cCKOUM", 0.7, 1.0, 3, 150, 1830, 28],
+["Donovan Mitchell", "Shooting Guard", 75, 83.0, 24.8, 4.6, 4.4, 36.4, 0, 2017, 55, 90, 75, "Spida dropped 71 in a game, and somehow that's only the third thing people mention.", "Ap3IS9RPxFI", 0.3, 1.4, 7, 240, 1922, 8],
+["Jaylen Brown", "Small Forward", 78, 73.5, 21.5, 2.9, 5.3, 36.0, 1, 2016, 80, 80, 70, "2024 Finals MVP — the chip on the shoulder now wears a ring.", "wp4RtGyPm4A", 0.4, 1.1, 4, 184, 1782, 10],
+["Evan Mobley", "Power Forward", 83, 71.5, 16.5, 3.0, 9.0, 33.0, 0, 2021, 95, 65, 60, "2025 Defensive Player of the Year — long arms, longer future.", "03p5rQrphNc", 1.5, 0.8, 2, 96, 1320, 45],
+["Julius Randle", "Power Forward", 80, 73.0, 19.5, 3.6, 9.2, 33.5, 0, 2014, 50, 65, 60, "Lefty bully-ball aesthetics, two All-NBA nods, and the full New York emotional experience.", "jftF75YTfWM", 0.4, 0.7, 3, 160, 1711, 43],
+["DeMar DeRozan", "Shooting Guard", 78, 84.5, 21.0, 4.0, 4.3, 29.5, 0, 2009, 45, 88, 70, "The mid-range's last great defender — keeping a dying art form not just alive but All-NBA.", "5aC-SLWMrt4", 0.3, 1.0, 6, 80, 2020, 12],
+["Paul George", "Small Forward", 80, 84.5, 20.5, 3.7, 6.3, 38.0, 0, 2010, 85, 65, 70, "PG-13: two-way wing excellence, six All-NBA nods, one podcast too many.", "nB8k4nuBwx8", 0.4, 1.7, 9, 244, 2156, 20],
+["Isaiah Thomas", "Point Guard", 69, 87.0, 17.6, 4.8, 2.4, 36.0, 0, 2011, 30, 88, 75, "5'9\", last pick of the draft, fourth in MVP voting. The King in the Fourth.", "KUWK0sIzARg", 0.1, 0.9, 2, 245, 2199, 8],
+["Kyle Lowry", "Point Guard", 72, 79.5, 14.7, 6.2, 4.3, 36.7, 1, 2006, 75, 75, 65, "Charge-taking champion of the world; Toronto's beating heart in 2019.", "HElflzYcIEk", 0.3, 1.4, 6, 190, 1500, 20],
+["Marc Gasol", "Center", 83, 75.5, 14.0, 3.4, 7.4, 35.2, 1, 2008, 90, 70, 55, "DPOY brain in a seven-foot frame — the Gasol who chose passing angles over posters.", "eMa-xGEtKXQ", 1.4, 0.9, 3, 84, 1443, 35],
+["LaMarcus Aldridge", "Power Forward", 83, 81.0, 19.1, 2.0, 8.1, 32.0, 0, 2006, 60, 70, 50, "The fadeaway from the left block, ten thousand times, beautifully.", "PmNYlvQ0mZ8", 1.1, 0.7, 7, 37, 1700, 45],
+["DeMarcus Cousins", "Center", 82, 73.8, 19.6, 3.0, 10.2, 33.2, 0, 2010, 55, 55, 75, "Boogie: the most talented center of his era, and the most technical fouls too.", "VE4dBclkBe4", 1.1, 1.4, 4, 131, 1944, 55],
+["DeAndre Jordan", "Center", 83, 47.5, 8.8, 1.2, 10.3, 5.0, 1, 2008, 75, 40, 60, "Lob City's finisher. Career 47% from the line — hack-a-DJ was a league-wide strategy.", "Y6CsSW2fNo0", 1.7, 0.6, 1, 1, 943, 60],
+["Pascal Siakam", "Power Forward", 80, 77.0, 17.5, 3.4, 6.7, 33.0, 1, 2016, 70, 70, 60, "Spicy P: from Cameroonian camps to a ring and a spin move that defies scouting.", "uxsj4iA_okQ", 0.6, 0.8, 3, 132, 1550, 30],
+["Dwight Howard", "Center", 82, 56.7, 15.7, 1.3, 11.8, 21.0, 1, 2004, 95, 50, 75, "Three straight DPOYs, eight All-NBA teams, one Superman cape.", "c8nnjY0WQfw", 1.8, 0.9, 8, 2, 1786, 69],
+["Derrick Rose", "Point Guard", 74, 82.3, 17.4, 5.2, 3.2, 31.5, 0, 2008, 45, 80, 85, "Youngest MVP ever. The what-if that still hurts league-wide.", "Xrpkg3Rmln0", 0.3, 0.8, 3, 128, 2026, 25],
+["Tony Parker", "Point Guard", 74, 75.1, 15.5, 5.6, 2.7, 32.4, 4, 2001, 55, 85, 60, "The teardrop merchant — four rings at full sprint.", "4VAd4QdXusM", 0.1, 0.8, 6, 60, 1600, 15],
+["Chris Bosh", "Power Forward", 83, 79.9, 19.2, 2.0, 8.5, 33.5, 2, 2003, 70, 70, 65, "The Heatles' quiet engine; sacrificed stats for rings and made it look dignified.", "207zqesKHuQ", 1.0, 0.8, 11, 60, 1680, 50],
+["Amar'e Stoudemire", "Power Forward", 82, 76.0, 18.9, 1.2, 7.8, 24.0, 0, 2002, 40, 70, 70, "STAT: pick-and-roll detonation specialist of the Seven Seconds or Less Suns.", "_vgZ3DflAKY", 1.2, 0.9, 6, 10, 2080, 45],
+["Blake Griffin", "Power Forward", 81, 69.0, 19.0, 4.0, 8.0, 33.0, 0, 2010, 45, 65, 85, "Jumped over a car, evolved into a point-forward, lives rent-free in posters.", "hoarqsrBULo", 0.5, 0.9, 6, 185, 1838, 63],
+["Gilbert Arenas", "Point Guard", 76, 80.3, 20.7, 5.3, 3.9, 35.1, 0, 2001, 40, 85, 80, "Agent Zero: called game-winners before halftime. Hibachi.", "nusHVIvTI1I", 0.2, 1.6, 3, 205, 2346, 10],
+["Deron Williams", "Point Guard", 75, 82.2, 16.3, 8.1, 3.1, 35.7, 0, 2005, 50, 70, 55, "The crossover that briefly won the Deron-vs-CP3 debate.", "kd0dsWXsMlQ", 0.2, 1.0, 3, 153, 1600, 38],
+["Brandon Roy", "Shooting Guard", 78, 80.0, 18.8, 4.7, 4.3, 34.8, 0, 2006, 50, 85, 65, "Three years of brilliance before his knees called time. Portland still mourns.", "KnGs57A-O0w", 0.3, 1.0, 3, 88, 1763, 8],
+["Andrew Bynum", "Center", 84, 69.2, 11.5, 1.4, 7.7, 10.0, 2, 2005, 70, 55, 50, "Two rings at 22, All-NBA at 24, bowling anecdotes by 26.", "FjpjUxnxBQk", 1.6, 0.4, 1, 1, 1122, 40],
+["Kevin Love", "Power Forward", 82, 82.5, 17.0, 2.4, 10.5, 37.0, 1, 2008, 45, 65, 65, "Outlet passes like artillery; once averaged 26-and-31 in a game. Literally 31.", "nJa0j-lJzio", 0.5, 0.7, 5, 185, 2010, 64],
+["Joakim Noah", "Center", 83, 71.0, 8.8, 2.8, 9.0, 15.0, 0, 2007, 90, 60, 70, "2014 DPOY and the best passing center of his decade; played every possession like a final.", "8hEg6Z2fJZM", 1.3, 0.9, 2, 0, 944, 44],
+["Gary Payton", "Point Guard", 76, 72.9, 16.3, 6.7, 3.9, 31.7, 1, 1990, 98, 75, 85, "The Glove: the only point guard ever to win DPOY. Your ear has never recovered from the trash talk.", "YfS8lEzIVSo", 0.2, 1.8, 9, 170, 1984, 35],
+["Chauncey Billups", "Point Guard", 75, 89.4, 15.2, 5.4, 2.9, 38.7, 1, 1997, 65, 92, 65, "Mr. Big Shot — 2004 Finals MVP for the team with no superstar, which made him one.", "Ca9TVg9ARjs", 0.2, 1.0, 5, 185, 1500, 20],
+["Sam Cassell", "Point Guard", 75, 86.1, 15.7, 6.0, 3.2, 33.5, 3, 1993, 50, 85, 75, "Three rings, one dance, infinite big-shot confidence.", "2DtWVc1AJf4", 0.2, 1.2, 1, 99, 1604, 25],
+["Baron Davis", "Point Guard", 75, 71.1, 16.1, 7.2, 3.8, 32.0, 0, 1999, 60, 80, 80, "We Believe. The dunk on Kirilenko is a regional holiday in Oakland.", "k9NUCr38ykE", 0.4, 1.8, 2, 180, 1700, 30],
+["Eddie Jones", "Shooting Guard", 78, 80.5, 14.8, 3.3, 4.0, 37.1, 0, 1994, 80, 65, 50, "All-defense smoothness; the trade that broke young-Kobe-era Lakers fans' hearts.", "sp7Inn-NBoQ", 0.6, 1.7, 3, 150, 1528, 8],
+["Grant Hill", "Small Forward", 80, 76.9, 16.7, 4.1, 6.0, 31.4, 0, 1994, 70, 75, 80, "Co-Rookie of the Year, proto-LeBron point forward; the ankle stole a top-ten career.", "p_KT5CM24lg", 0.6, 1.2, 7, 33, 1712, 38],
+["Peja Stojakovic", "Small Forward", 82, 89.5, 17.0, 1.8, 4.7, 40.1, 1, 1998, 35, 75, 60, "One of the purest strokes ever recorded; 2002 still makes Sacramento scream.", "nDtYeF2IsXg", 0.1, 0.9, 3, 240, 1960, 10],
+["Chris Webber", "Power Forward", 82, 64.9, 20.7, 4.2, 9.8, 29.9, 0, 1993, 65, 60, 80, "The hub of Sacramento's beautiful basketball — a passing big before it was meta.", "ZOh0wnQ1VZU", 1.4, 1.4, 5, 27, 1897, 58],
+["Jermaine O'Neal", "Power Forward", 83, 71.7, 13.2, 1.4, 7.2, 14.0, 0, 1996, 75, 60, 55, "Prep-to-pro patience rewarded: six straight All-Star teams in Indiana.", "T5Rg1fcaWEs", 1.8, 0.5, 6, 5, 1568, 50],
+["Elton Brand", "Power Forward", 81, 74.0, 15.9, 2.1, 8.5, 12.0, 0, 1999, 70, 60, 45, "Twenty-and-ten metronome on teams that never got the memo.", "0nh9Zke6ySU", 1.6, 1.0, 2, 2, 1951, 55],
+["Alonzo Mourning", "Center", 82, 69.2, 17.1, 1.1, 8.5, 24.7, 1, 1992, 95, 70, 80, "Two DPOYs, one kidney transplant, zero quit. Flexed after every block; earned every flex.", "buX2Ml4qTxM", 2.8, 0.5, 7, 2, 1640, 45],
+["Dikembe Mutombo", "Center", 86, 68.4, 9.8, 1.0, 10.3, 10.0, 0, 1991, 98, 50, 85, "Four DPOYs and the finger wag — not in his house, not in anyone's house.", "nZUL9eugfKA", 2.8, 0.4, 8, 0, 1064, 60],
+["Ben Wallace", "Center", 81, 41.4, 5.7, 1.3, 9.6, 13.0, 1, 1996, 98, 55, 75, "Undrafted: four DPOYs, a ring, the best afro in league history. 41% from the line, 100% from the heart.", "wPRLMb-AET4", 2.0, 1.3, 4, 1, 760, 50],
 ];
 
 // ---------------- state ----------------
 let metricX = METRICS[10]; // Debut
-let metricY = METRICS[0]; // Scoring
+let metricY = METRICS[11]; // Season 3PM
 const off = new Set();
 const stage = document.getElementById("stage");
 const tip = document.getElementById("tip");
@@ -592,7 +608,7 @@ const TOUCH = matchMedia("(hover: none), (pointer: coarse)").matches;
 
 const songs = SONGS.map((p, i) => ({
   title: p[0], album: p[1], hin: p[2], ftp: p[3], ppgV: p[4], apgV: p[5], rpgV: p[6], p3V: p[7],
-  ringsV: p[8], debut: p[9], defense: p[10], clutch: p[11], aura: p[12], note: p[13], yt: p[14], bpg: p[15], spgV: p[16], asV: p[17], id: i
+  ringsV: p[8], debut: p[9], defense: p[10], clutch: p[11], aura: p[12], note: p[13], yt: p[14], bpg: p[15], spgV: p[16], asV: p[17], s3mV: p[18], sptsV: p[19], sddV: p[20], id: i
 }));
 // normalize every raw stat to 0–100 for plotting; tooltips show the real values
 const norm = (get, k) => {
@@ -603,13 +619,16 @@ norm(s => s.hin, "height"); norm(s => s.ftp, "ft"); norm(s => s.ppgV, "ppg");
 norm(s => s.apgV, "apg"); norm(s => s.rpgV, "rpg"); norm(s => s.p3V, "p3");
 norm(s => s.ringsV, "rings"); norm(s => s.debut, "rel"); norm(s => s.bpg, "blk");
 norm(s => s.spgV, "spg"); norm(s => s.asV, "allstar");
+norm(s => s.s3mV, "s3m"); norm(s => s.sptsV, "spts"); norm(s => s.sddV, "sdd");
 const fmtH = h => Math.floor(h / 12) + "'" + (h % 12) + '"';
 const disp = (s, m) =>
   m.k === "height" ? fmtH(s.hin) : m.k === "ft" ? s.ftp.toFixed(1) + "%" :
   m.k === "ppg" ? s.ppgV.toFixed(1) + " ppg" : m.k === "apg" ? s.apgV.toFixed(1) + " apg" :
   m.k === "rpg" ? s.rpgV.toFixed(1) + " rpg" : m.k === "p3" ? s.p3V.toFixed(1) + "%" :
   m.k === "blk" ? s.bpg.toFixed(1) + " bpg" : m.k === "spg" ? s.spgV.toFixed(1) + " spg" :
-  m.k === "allstar" ? s.asV + "× All-Star" : m.k === "rings" ? s.ringsV + (s.ringsV === 1 ? " ring" : " rings") :
+  m.k === "allstar" ? s.asV + "× All-Star" : m.k === "s3m" ? s.s3mV + " threes" :
+  m.k === "spts" ? s.sptsV.toLocaleString() + " pts" : m.k === "sdd" ? s.sddV + " dbl-dbls" :
+  m.k === "rings" ? s.ringsV + (s.ringsV === 1 ? " ring" : " rings") :
   m.k === "rel" ? s.debut : s[m.k];
 
 // ---------------- build UI ----------------
@@ -680,7 +699,7 @@ const dotEls = songs.map(s => {
   const a = ALBUMS[s.album];
   d.className = "dot";
   d.style.backgroundColor = a.c;
-  if (FACES[s.title]) d.style.backgroundImage = `url(${FACES[s.title]})`;
+  if (FACES[s.title]) { d.style.backgroundImage = `url(${FACES[s.title]})`; d.classList.add("face"); }
   else if (ART[s.album]) d.style.backgroundImage = `url(${ART[s.album]})`;
   d.style.border = `1.5px solid ${a.c}`;
   d.style.boxShadow = `0 0 8px ${a.c}55`;
