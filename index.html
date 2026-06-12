@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Spectra — interactive maps of pop catalogs</title>
+<title>The Spectra — interactive maps of everything</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -48,16 +48,30 @@
     box-shadow: 0 22px 60px rgba(210, 60, 110, .22);
   }
   .card.olivia:hover { box-shadow: 0 30px 80px rgba(230, 80, 130, .38); }
+  .card.bball {
+    background: linear-gradient(150deg, #2e1d12 0%, #161013 55%, #2a1a0e 100%);
+    box-shadow: 0 22px 60px rgba(232, 115, 26, .2);
+  }
+  .card.bball:hover { box-shadow: 0 30px 80px rgba(232, 115, 26, .36); }
+  .card.curry {
+    background: linear-gradient(150deg, #2e2410 0%, #171208 55%, #2c1c0a 100%);
+    box-shadow: 0 22px 60px rgba(212, 160, 40, .2);
+  }
+  .card.curry:hover { box-shadow: 0 30px 80px rgba(232, 180, 60, .36); }
   .card .glow {
     position: absolute; top: -60px; right: -60px; width: 180px; height: 180px;
     border-radius: 50%; filter: blur(50px); opacity: .5;
   }
   .taylor .glow { background: #8b5cf6; }
   .olivia .glow { background: #e0356e; }
+  .bball .glow { background: #e8731a; }
+  .curry .glow { background: #d4a028; }
   .who { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9b93ad; }
   .card h2 { font-size: 28px; font-weight: 800; margin: 8px 0 10px; }
   .taylor h2 { color: #d9c9ff; }
   .olivia h2 { color: #ff9fb8; }
+  .bball h2 { color: #ffb066; }
+  .curry h2 { color: #ffd166; }
   .desc { color: #b7add0; font-size: 14px; line-height: 1.65; min-height: 70px; }
   .eras { display: flex; gap: 5px; margin: 18px 0 14px; }
   .eras i { height: 8px; border-radius: 8px; flex: 1; opacity: .85; }
@@ -69,6 +83,8 @@
   }
   .taylor .go { background: linear-gradient(90deg, #6d4fc2, #a64fc2); box-shadow: 0 0 18px rgba(150,100,255,.4); }
   .olivia .go { background: linear-gradient(90deg, #c2275a, #e0356e); box-shadow: 0 0 18px rgba(230,80,130,.4); }
+  .bball .go { background: linear-gradient(90deg, #c25a1a, #e8731a); box-shadow: 0 0 18px rgba(232,115,26,.4); }
+  .curry .go { background: linear-gradient(90deg, #b8860b, #d4a028); box-shadow: 0 0 18px rgba(212,160,40,.4); }
 
   footer { margin-top: 46px; color: #564e6e; font-size: 12.5px; text-align: center; line-height: 1.7; }
 </style>
@@ -78,7 +94,7 @@
 
 <header>
   <h1>The Spectra</h1>
-  <div class="tag">Interactive maps of entire pop catalogs — every song scored, plotted, and playable. Plus your aura.</div>
+  <div class="tag">Interactive maps of entire catalogs — pop discographies, hoops legends, the world's curries. Every dot scored, plotted, and clickable. Plus your aura.</div>
 </header>
 
 <div class="cards">
@@ -107,6 +123,32 @@
     </div>
     <div class="meta"><span><b>43</b> songs</span><span><b>4</b> eras</span><span><b>9</b> metrics</span><span><b>🔮</b> aura readings</span></div>
     <span class="go">Spill your guts →</span>
+  </a>
+
+  <a class="card bball" href="basketball.html">
+    <div class="glow"></div>
+    <div class="who">NBA · 1956–2026</div>
+    <h2>The Basketball Spectrum</h2>
+    <div class="desc">60 legends and current stars — Muggsy to Manute, Russell to Wemby — plotted by height, free throws, rings, clutch, and aura. Build your starting five and get scouted.</div>
+    <div class="eras">
+      <i style="background:#5dade2"></i><i style="background:#e8b647"></i><i style="background:#6fae4e"></i>
+      <i style="background:#d6453c"></i><i style="background:#a05cc8"></i>
+    </div>
+    <div class="meta"><span><b>100</b> players</span><span><b>5</b> positions</span><span><b>11</b> stats</span><span><b>📋</b> scouting reports</span></div>
+    <span class="go">Take the court →</span>
+  </a>
+
+  <a class="card curry" href="curry.html">
+    <div class="glow"></div>
+    <div class="who">The world's curries</div>
+    <h2>The Curry Spectrum</h2>
+    <div class="desc">42 curries from korma to phaal, Chiang Mai to Glasgow — mapped by heat, creaminess, tang, soupiness, and cook time. Rendang anchors dry; rasam anchors soup; currywurst attends under protest.</div>
+    <div class="eras">
+      <i style="background:#e8b647"></i><i style="background:#6fae4e"></i><i style="background:#3fb8af"></i>
+      <i style="background:#c97a3d"></i><i style="background:#7b8cde"></i><i style="background:#d6453c"></i>
+    </div>
+    <div class="meta"><span><b>42</b> curries</span><span><b>6</b> traditions</span><span><b>10</b> dimensions</span><span><b>🍛</b> order readings</span></div>
+    <span class="go">Order the spread →</span>
   </a>
 </div>
 
